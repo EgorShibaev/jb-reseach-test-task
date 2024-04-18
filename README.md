@@ -25,21 +25,21 @@ Here are the characteristics of the dataset:
 The model was fine-tuned on the Kotlin dataset. The fine-tuning code can be found in [src/fine_tuning/fine_tune.py](src/fine_tuning/fine_tune.py). The PEFT technique LoRA was used with the following configuration:
 ```angular2html
 LoraConfig(
-        r=8,
-        lora_alpha=16,
-        target_modules=[
-            "q_proj",
-            "k_proj",
-            "v_proj",
-            "dense",
-            "fc1",
-            "fc2",
-            "lm_head"
-        ],
-        bias="none",
-        lora_dropout=0.05, 
-        task_type="CAUSAL_LM",
-    )
+    r=8,
+    lora_alpha=16,
+    target_modules=[
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "dense",
+        "fc1",
+        "fc2",
+        "lm_head"
+    ],
+    bias="none",
+    lora_dropout=0.05, 
+    task_type="CAUSAL_LM",
+)
 ```
 
 The number of parameters for fine-tuning:
