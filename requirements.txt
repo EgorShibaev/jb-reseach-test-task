@@ -1,0 +1,9 @@
+transformers
+torch
+loguru
+fuzzywuzzy
+tqdm
+scikit-learn
+accelerate
+peft
+wandb
