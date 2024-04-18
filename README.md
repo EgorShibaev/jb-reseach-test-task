@@ -79,6 +79,98 @@ The metrics after fine-tuning are:
 
 # Analysis
 
+Fine-tuning the model on the Kotlin dataset improved the model's performance 
+in the task of Kotlin code completion. After fine-tuning, the model was able to
+write meaningful Kotlin code snippets. Here are few examples of generated and expected code snippets:
+
+Generated code:
+```kotlin
+    val changedSymbols = allChangedSymbols.toSet()
+    for (file in filesDiff) {
+        val changedSymbol = file.symbol
+        if (changedSymbol!= null) {
+            changedSymbols.add(changedSymbol)
+        }
+    }
+    return ChangesEither(changedSymbols)
+}
+```
+
+Expected:
+```kotlin
+
+    val modifiedJava = filesDiff.modified.filter(File::isJavaFile)
+    val removedJava = filesDiff.removed.filter(File::isJavaFile)
+
+    if (removedJava.any()) {
+        reporter.info { "Some java files are removed: [${removedJava.joinToString()}]" }
+        return ChangesEither.Unknown(BuildAttribute.JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED)
+    }
+
+    val symbols = HashSet<LookupSymbol>()
+    for (javaFile in modifiedJava) {
+        assert(javaFile.extension.equals("java", ignoreCase = true))
+
+        val psiFile = psiFileFactory(javaFile)
+        if (psiFile !is PsiJavaFile) {
+            reporter.info { "Expected PsiJavaFile, got ${psiFile?.javaClass}" }
+            return ChangesEither.Unknown(BuildAttribute.JAVA_CHANGE_UNEXPECTED_PSI)
+        }
+
+        psiFile.classes.forEach { it.addLookupSymbols(symbols) }
+    }
+    allSymbols.addAll(symbols)
+    return ChangesEither.Known(lookupSymbols = symbols)
+}
+```
+
+Generated code:
+```kotlin
+    caret_context>context()
+}
+```
+
+Expected:
+```kotlin
+    class Local {}
+
+    <caret_context>Local()
+}
+```
+
+Generated code:
+```kotlin
+    foo()
+}
+```
+
+Expected:
+```kotlin
+    val s = foo()
+    s.length
+}
+```
+
+
+Generated code:
+```kotlin
+    return if (a > b) a else b
+}
+```
+
+Expected:
+```kotlin
+    if (a > b) {
+        println(a)
+        return a
+    } else {
+        println(b)
+        return b
+    }
+}
+```
+
+
 After fine-tuning the model on the Kotlin dataset, the performance of the model improved on the Kotlin dataset, but declined on the Python dataset. Sometimes, the model began generating Kotlin code when trying to complete Python code. For example, the model generated the following code when given the Python dataset:
 
 `init {  }`
